@@ -10,6 +10,8 @@ final class CharmOverlayWindow: NSWindow {
 
     var contentRect: NSRect { NSRect(origin: .zero, size: Self.windowSize) }
 
+    private var clickThroughTimer: Timer?
+
     init() {
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
         let origin = NSPoint(
@@ -26,7 +28,38 @@ final class CharmOverlayWindow: NSWindow {
         level = .statusBar
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
         isMovableByWindowBackground = false
-        ignoresMouseEvents = false
+        // Start click-through: only the charm + anchor regions are interactable,
+        // everything else (string, blank space) passes clicks to the app behind.
+        ignoresMouseEvents = true
+
+        startClickThroughMonitoring()
+    }
+
+    deinit { clickThroughTimer?.invalidate() }
+
+    /// Polls the cursor and makes the window click-through except when the
+    /// pointer is near the charm or the anchor (or a drag is in progress), so
+    /// the area around the string never blocks clicks on the desktop.
+    private func startClickThroughMonitoring() {
+        clickThroughTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+            self?.updateClickThrough()
+        }
+        RunLoop.main.add(clickThroughTimer!, forMode: .common)
+    }
+
+    private func updateClickThrough() {
+        guard let view = contentView as? CharmView else { return }
+        guard let anchor = view.screenAnchor, let bob = view.screenBob else { return }
+
+        if alphaValue < 0.05 {
+            ignoresMouseEvents = true
+            return
+        }
+
+        let mouse = NSEvent.mouseLocation
+        let anchorHit = CGRect(x: anchor.x - 24, y: anchor.y - 24, width: 48, height: 48).contains(mouse)
+        let bobHit = CGRect(x: bob.x - 56, y: bob.y - 56, width: 112, height: 112).contains(mouse)
+        ignoresMouseEvents = !(anchorHit || bobHit || view.isDraggingCharmOrAnchor)
     }
 
     // Never take keyboard focus away from whatever app the user is in —

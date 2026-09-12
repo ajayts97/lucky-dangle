@@ -78,6 +78,23 @@ final class CharmView: NSView {
         )
     }
 
+    /// True while the user is actively dragging the charm or its anchor —
+    /// used by the window to keep receiving events (and keep the click-through
+    /// off) for the duration of the gesture.
+    var isDraggingCharmOrAnchor: Bool { isDraggingCharm || isDraggingAnchor }
+
+    var screenAnchor: NSPoint? {
+        guard let window = window else { return nil }
+        let p = convert(anchor, to: nil)
+        return NSPoint(x: window.frame.minX + p.x, y: window.frame.minY + p.y)
+    }
+
+    var screenBob: NSPoint? {
+        guard let window = window else { return nil }
+        let p = convert(bobPosition(), to: nil)
+        return NSPoint(x: window.frame.minX + p.x, y: window.frame.minY + p.y)
+    }
+
     // MARK: - Drawing
 
     override func draw(_ dirtyRect: NSRect) {
