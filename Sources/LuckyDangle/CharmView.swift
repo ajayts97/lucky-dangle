@@ -7,7 +7,7 @@ import AppKit
 final class CharmView: NSView {
 
     private var emoji: String = "🍀"
-    private let stringLength: CGFloat = 140
+    private let stringLength: CGFloat = 280
     private let anchor: NSPoint
 
     private var angle: CGFloat = 0.05
@@ -26,7 +26,7 @@ final class CharmView: NSView {
     private var flashOpacity: CGFloat = 0
 
     override init(frame frameRect: NSRect) {
-        anchor = NSPoint(x: frameRect.width / 2, y: frameRect.height - 12)
+        anchor = NSPoint(x: frameRect.width / 2, y: frameRect.height - 24)
         super.init(frame: frameRect)
         wantsLayer = true
         startPhysicsLoop()
@@ -87,20 +87,20 @@ final class CharmView: NSView {
         let bob = bobPosition()
 
         ctx.setStrokeColor(NSColor.white.withAlphaComponent(0.55).cgColor)
-        ctx.setLineWidth(1.2)
+        ctx.setLineWidth(2.4)
         ctx.move(to: anchor)
         ctx.addLine(to: bob)
         ctx.strokePath()
 
         ctx.setFillColor(NSColor.white.withAlphaComponent(0.7).cgColor)
-        ctx.fillEllipse(in: NSRect(x: anchor.x - 2, y: anchor.y - 2, width: 4, height: 4))
+        ctx.fillEllipse(in: NSRect(x: anchor.x - 4, y: anchor.y - 4, width: 8, height: 8))
 
         if flashOpacity > 0 {
             ctx.setFillColor(NSColor.systemYellow.withAlphaComponent(flashOpacity * 0.35).cgColor)
-            ctx.fillEllipse(in: NSRect(x: bob.x - 30, y: bob.y - 30, width: 60, height: 60))
+            ctx.fillEllipse(in: NSRect(x: bob.x - 60, y: bob.y - 60, width: 120, height: 120))
         }
 
-        let fontSize: CGFloat = 34
+        let fontSize: CGFloat = 68
         let str = NSAttributedString(string: emoji, attributes: [.font: NSFont.systemFont(ofSize: fontSize)])
         let size = str.size()
         str.draw(at: NSPoint(x: bob.x - size.width / 2, y: bob.y - size.height / 2))
@@ -113,7 +113,7 @@ final class CharmView: NSView {
         lastDragLocation = loc
         lastDragTime = event.timestamp
 
-        if loc.y > anchor.y - 16 {
+        if loc.y > anchor.y - 32 {
             isDraggingAnchor = true
         } else {
             isDraggingCharm = true

@@ -75,8 +75,9 @@ this is a genuine macOS security gate, not a bug in the app.
 - `AppDelegate` owns the `NSStatusItem` (menu bar icon + menu) and the
   overlay window, and wires up the global/local key monitors and the
   `luckydangle://` URL handler.
-- `CharmOverlayWindow` is a small (140×240pt), borderless, transparent,
-  always-on-top (`level = .statusBar`) `NSWindow`. Because it's sized to
+- `CharmOverlayWindow` is a small (280×480pt), borderless, transparent,
+  always-on-top (`level = .statusBar`) `NSWindow` hung near the top-right edge
+  of the screen. Because it's sized to
   just the charm rather than the whole screen, it never blocks clicks
   anywhere else on the desktop — there's no need for the trickier
   "ignore mouse events except in this one spot" pattern a full-screen

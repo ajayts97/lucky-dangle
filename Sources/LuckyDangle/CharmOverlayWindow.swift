@@ -6,14 +6,14 @@ import AppKit
 /// anywhere else on the desktop.
 final class CharmOverlayWindow: NSWindow {
 
-    static let windowSize = NSSize(width: 140, height: 240)
+    static let windowSize = NSSize(width: 280, height: 480)
 
     var contentRect: NSRect { NSRect(origin: .zero, size: Self.windowSize) }
 
     init() {
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
         let origin = NSPoint(
-            x: screenFrame.midX - Self.windowSize.width / 2,
+            x: screenFrame.maxX - Self.windowSize.width - 40,
             y: screenFrame.maxY - Self.windowSize.height
         )
         let frame = NSRect(origin: origin, size: Self.windowSize)
